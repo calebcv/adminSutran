@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>ViajeSeguro</title>
+
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../styles/main.css">
+	<link rel="stylesheet" href="../styles/leaflet.css">
+	<script src="https://kit.fontawesome.com/b7219096b7.js" crossorigin="anonymous"></script>
+</head>
+<body id="alertas-page">
+	
+	<aside></aside>
+
+	<main>
+
+		<header></header>
+
+		<div class="content">
+			<div class="box description">
+				<a class="back" href="javascript:history.back()"><i class="fas fa-arrow-left" aria-hidden="true"></i>Volver</a>
+				<div>
+					<div>
+						<h1>Alertas</h1>
+						<p>Visualiza, descarga o gestiona las generadas en la aplicaci&oacute;n ViajeSeguro.</p>
+					</div>
+					<a class="button-blue" href="javascript:void(0)">Descargar</a>
+				</div>
+			</div>
+
+			<div class="box table">
+				<table id="alertas-table">
+					<thead><tr>
+						<th>ID</th>
+						<th>Tipo de alerta</th>
+						<th>Dispositivo</th>
+						<th>Fecha</th>
+						<th>Latitud</th>
+						<th>Longitud</th>
+						<th>Ver detalle</th>
+					</tr></thead>
+					<tbody></tbody>
+				</table>
+			</div>
+
+			<div class="box alert-detail form">
+				<h2>Detalle de alerta</h2>
+				<div class="map-container">
+					<div id="map"></div>
+				</div>
+				<div class="row-button">
+					<button type="button" class="button-white" onclick="closeMap()">Cancelar</button>
+				</div>
+			</div>
+		</div>
+		
+	</main>
+
+	<script type="text/javascript" src="../scripts/jquery.js"></script>
+	<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="../scripts/main.js"></script>
+	<script type="text/javascript" src="../scripts/leaflet.js"></script>
+	<script type="text/javascript">
+		
+		const testAlertas = [{
+			"id": 1,
+			"tipo": "Accidente",
+			"dispositivo": "Android",
+			"fecha": "27/05/2019",
+			"latitud": -12.0534812,
+			"longitud": -77.0270381
+		}, {
+			"id": 2,
+			"tipo": "Accidente",
+			"dispositivo": "Android",
+			"fecha": "17/01/2020",
+			"latitud": -11.9910783,
+			"longitud": -77.0975778
+		}, {
+			"id": 3,
+			"tipo": "Robo",
+			"dispositivo": "Android",
+			"fecha": "04/03/2020",
+			"latitud": -12.0640977,
+			"longitud": -77.035456
+		}, {
+			"id": 4,
+			"tipo": "Robo",
+			"dispositivo": "Android",
+			"fecha": "02/08/2019",
+			"latitud": -12.120118,
+			"longitud": -77.023962
+		}, {
+			"id": 5,
+			"tipo": "Robo",
+			"dispositivo": "iOS",
+			"fecha": "17/05/2019",
+			"latitud": -12.1923873,
+			"longitud": -77.0118246
+		}, {
+			"id": 6,
+			"tipo": "Demora",
+			"dispositivo": "iOS",
+			"fecha": "03/09/2019",
+			"latitud": -12.0840365,
+			"longitud": -77.0818626
+		}, {
+			"id": 7,
+			"tipo": "Accidente",
+			"dispositivo": "Android",
+			"fecha": "13/08/2019",
+			"latitud": -12.060224,
+			"longitud": -77.031215
+		}, {
+			"id": 8,
+			"tipo": "Demora",
+			"dispositivo": "Android",
+			"fecha": "02/12/2019",
+			"latitud": -12.0854556,
+			"longitud": -77.0323253
+		}, {
+			"id": 9,
+			"tipo": "Demora",
+			"dispositivo": "iOS",
+			"fecha": "22/10/2019",
+			"latitud": -12.0040124,
+			"longitud": -76.8777806
+		}, {
+			"id": 10,
+			"tipo": "Robo",
+			"dispositivo": "Android",
+			"fecha": "15/10/2019",
+			"latitud": -12.1039524,
+			"longitud": -77.0287268
+		}, {
+			"id": 11,
+			"tipo": "Demora",
+			"dispositivo": "iOS",
+			"fecha": "14/03/2020",
+			"latitud": -12.0447722,
+			"longitud": -77.0317611
+		}, {
+			"id": 12,
+			"tipo": "Robo",
+			"dispositivo": "iOS",
+			"fecha": "09/03/2020",
+			"latitud": -12.1107407,
+			"longitud": -77.0478777
+		}, {
+			"id": 13,
+			"tipo": "Robo",
+			"dispositivo": "Android",
+			"fecha": "10/05/2019",
+			"latitud": -12.0619399,
+			"longitud": -77.0342436999999
+		}, {
+			"id": 14,
+			"tipo": "Accidente",
+			"dispositivo": "Android",
+			"fecha": "14/03/2020",
+			"latitud": -12.0216861,
+			"longitud": -77.0268739999999
+		}, {
+			"id": 15,
+			"tipo": "Demora",
+			"dispositivo": "iOS",
+			"fecha": "13/11/2019",
+			"latitud": -12.0259518,
+			"longitud": -76.9061426
+		}, {
+			"id": 16,
+			"tipo": "Demora",
+			"dispositivo": "iOS",
+			"fecha": "23/02/2020",
+			"latitud": -12.0858066,
+			"longitud": -77.0068782
+		}, {
+			"id": 17,
+			"tipo": "Demora",
+			"dispositivo": "Android",
+			"fecha": "05/10/2019",
+			"latitud": -12.0890793,
+			"longitud": -77.0693984
+		}, {
+			"id": 18,
+			"tipo": "Accidente",
+			"dispositivo": "iOS",
+			"fecha": "13/06/2019",
+			"latitud": -12.0147737,
+			"longitud": -76.8850432999999
+		}, {
+			"id": 19,
+			"tipo": "Robo",
+			"dispositivo": "iOS",
+			"fecha": "13/08/2019",
+			"latitud": -12.0463731,
+			"longitud": -77.042754
+		}, {
+			"id": 20,
+			"tipo": "Robo",
+			"dispositivo": "iOS",
+			"fecha": "23/03/2020",
+			"latitud": -12.098987,
+			"longitud": -77.006351
+		}]
+
+		const table = $('#alertas-table tbody')
+		table.empty()
+		testAlertas.forEach(alerta => {
+			const html = `
+				<tr>
+					<td>${alerta.id}</td>
+					<td>${alerta.tipo}</td>
+					<td>${alerta.dispositivo}</td>
+					<td>${alerta.fecha}</td>
+					<td>${alerta.latitud}</td>
+					<td>${alerta.longitud}</td>
+					<td class="acciones">
+						<button class="view" onclick="viewDetail(this)"><i class="fas fa-eye" aria-hidden="true"></i></button>
+					</td>
+				</tr>
+			`
+
+			table.append(html)
+		})
+
+		const alertasTable = $('#alertas-table').DataTable({
+			pageLength: 5,
+			lengthChange: false,
+			info: false,
+			language: {
+				search: 'Buscar alerta',
+				infoEmpty: 'No hay usuarios registrados',
+				paginate: {
+					previous: '<i class="fas fa-angle-left" aria-hidden="true"></i>',
+					next: '<i class="fas fa-angle-right" aria-hidden="true"></i>'
+				}
+			}
+		})
+
+		tableDisplay('#alertas-table')
+
+		let viewDetail = (e) => {
+
+			closeMap()
+
+			setTimeout(() => {
+				const row = getRowData(e, alertasTable)
+				const selected = testAlertas.find(a => { return a.id == row[0] })
+				launchMap(testAlertas, selected)
+	
+				$('.alert-detail').slideDown('fast', () => {
+					const scrollTop = $('.alert-detail').offset().top
+					$('html,body').animate({scrollTop: scrollTop - 20}, 'fast')
+				})
+			}, 300)
+			
+		}
+
+		let closeMap = () => {
+			$('.alert-detail').slideUp('fast', () => {
+				$('#map').remove()
+				$('.map-container').html('<div id="map"></div>')
+			})
+		}
+		
+	</script>
+	
+</body>
+</html>
